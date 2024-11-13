@@ -1,10 +1,17 @@
 import express from "express";
-import ensureAuthenticated from "../middleware/authorization.js";
-const calenderRouter = express();
+import calendarController from '../controller/calendarController.js'
+const router = express();
 
-calenderRouter.get("/", ensureAuthenticated, (req, res) => {
-  console.log("###### Logged In User Detail ######", req.user);
-  //res.send("welcome to calender app.");
-});
+//Create routes for categories
+router.route('/api/calendar') 
+.get(calendarController.list)
+.post(calendarController.create)
+.delete(calendarController.deleteAll)
 
-export default calenderRouter;
+router.route('/api/calendar/:author') 
+.get(calendarController.read)
+.put(calendarController.update) 
+.delete(calendarController.remove)
+
+router.param('author', calendarController.calendarByID) 
+export default router;
