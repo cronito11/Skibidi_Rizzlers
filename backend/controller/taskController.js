@@ -1,83 +1,71 @@
 import errorHandler from './error.controller.js'
-import Calendar from '../model/calendar.js'
+import Task from '../model/task.js'
+import Calendar from '../model/calendar.js';
+import calendarController from './calendarController.js'
+import extend from 'lodash/extend.js';
+
 //import extend from 'lodash/extend.js'
 
-//Creation Calendar
+//Creation Task
 const create = async (req, res) => {
-  //Get data from body
-  const newCalendar = new Calendar(req.body)
-  let user = await Calendar.find({author: newCalendar.author})
-  if(user.length > 0)
-    //Return error
-    return res.status(400).json({
-        error: "User have a calendar Created"
-    })
-    
-  try {
-    //Save data in data base
-    await newCalendar.save()
-    return res.status(200).json({
-        message: "Successfully Created calendar!"
-    })
-  } catch (err) {
-      //Return error
-      return res.status(400).json({
-          error: errorHandler.getErrorMessage(err)
-      })
-  }
+    const { calendarId } = req.params;
+    const newTask = req.body;
+
+    try {        
+    const calendar = await Calendar.findByIdAndUpdate(
+        calendarId,
+        { $push: { task: newTask}, update: Date.now },
+        { new: true }
+    );
+    res.json(calendar);
+    } catch (error) {
+    console.error("Error adding task:", error);
+    }
 }
 
 const list = async (req, res) => {
-  try {
-      const query = {};
-      //Check if exist id and add it to the query
-      if (req.query.author) {
-          query.author = { $regex: req.query.author, $options: 'i' };
-      }
 
-      //send request to data base based in the query.
-      let calendar = await Calendar.find(query).select('task updated created')
-      //showing porducts in the response
-      res.json(calendar)
+    const { calendarId } = req.params;
+  try {
+      let calendar = await calendarController.calendarByID(req, res,()=>{
+      }, calendarId)
+
+    //In case the error show error response
+    if(calendar.status == 400)
+        return res; 
+    res.json(calendar.task)
+     
   } catch (err) {
       return res.status(400).json({
           error: errorHandler.getErrorMessage(err)
       })
   }
 }
-const calendarByID = async (req, res, next, id) => {
-  try {
-      //find element by id in data bas
-      let calendar = await Calendar.findById(id)
-      //If product doesn't exist show message en response
-      if (!calendar)
-          return res.status('400').json({
-              error: "Calendar not found"
-          })
-      req.profile = calendar
-      next()
-      //Try to catch error in case that happend
-  } catch (err) {
-      return res.status('400').json({
-          error: "Could not retrieve calendar"
-      })
-  }
-}
-const read = (req, res) => {
-  return res.json(req.profile)
-}
 
 const update = async (req, res) => {
+    const { calendarId, taskId } = req.params;
+    const taskInfo = req.body;
   try {
-//Take object info
-      let calendar = req.profile
-      //Update data of product
-      //calendar = extend(calendar, req.body)
-      //Update date
-      calendar.updated = Date.now()
+    //Take object info
+    let calendar = await calendarController.calendarByID(req, res,()=>{
+    }, calendarId)
+
+    //In case the error show error response
+    if(calendar.status == 400)
+        return res; 
+    
+    let task = calendar.task.id(taskId);
+
+    if(!task)
+        return res.status(400).json(
+    {
+        error: `Task ${taskId} not found in calendar ${calendarId}`
+    })
+      //Update task info
+    task = extend(task, taskInfo);      
       //Save in data base
       await calendar.save()
-      res.json(calendar)
+      res.json(calendar);
   } catch (err) {
       return res.status(400).json({
           error: errorHandler.getErrorMessage(err)
@@ -85,31 +73,69 @@ const update = async (req, res) => {
   }
 }
 const remove = async (req, res) => {
-  try {
-      //Take object from Data base
-      let calendar = req.profile
-      //Delete product from data base
-      let deletedCalendar = await calendar.deleteOne()
-      res.json(deletedCalendar)
-  } catch (err) {
-      return res.status(400).json({
-          error: errorHandler.getErrorMessage(err)
-      })
-  }
+    const { calendarId, taskId } = req.params;
+
+    try {        
+        await calendarController.calendarByID(req, res,()=>{
+        }, calendarId)
+    
+        let calendar = req.profile;
+        //In case the error show error response
+        if(!calendar)
+            return res;
+
+        const taskIndex = calendar.task.findIndex(task => task._id.toString() === taskId);
+
+        if (taskIndex === -1) {
+            return res.status("400")
+            .json({ error: 'Task not found' });
+          }
+
+        calendar.task.splice(taskIndex, 1);
+        await calendar.save()        
+        res.json(calendar);
+    } catch (error) {
+        console.error("Error removing task:", error);
+    }
 }
 
 const deleteAll = async (req, res) => {
-  try {
-      //Delete all calendar from data base
-      let result = await Calendar.deleteMany({}); 
-      res.status(200).json({
-          message: `${result.deletedCount} products deleted successfully.`
-      });
-  } catch (err) {
-      return res.status(400).json({
-          error: errorHandler.getErrorMessage(err)
-      });
-  }
+    const { calendarId} = req.params;
+    try {        
+        await calendarController.calendarByID(req, res,()=>{
+        }, calendarId)
+    
+        let calendar = req.profile;
+        //In case the error show error response
+        if(!calendar)
+            return res;
+
+        calendar.task = [];
+        await calendar.save()        
+        res.json(calendar);
+    } catch (error) {
+        console.error("Error removing task:", error);
+    }
 };
-export default { create, calendarByID: calendarByID, read, list, remove, update, deleteAll}
+
+
+const calendarByID = async (req, res, next, id) => {
+    try {
+        //find element by id in data bas
+        let calendar = await Task.findById(id)
+        //If product doesn't exist show message en response
+        if (!calendar)
+            return res.status('400').json({
+                error: "Calendar not found"
+            })
+        req.profile = calendar
+        next()
+        //Try to catch error in case that happend
+    } catch (err) {
+        return res.status('400').json({
+            error: "Could not retrieve calendar"
+        })
+    }
+  }
+export default { create, calendarByID: calendarByID, list, remove, update, deleteAll}
 

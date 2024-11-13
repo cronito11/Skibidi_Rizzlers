@@ -1,5 +1,6 @@
 import express from "express";
 import calendarController from '../controller/calendarController.js'
+import taskController from "../controller/taskController.js"
 const router = express();
 
 //Create routes for categories
@@ -14,4 +15,14 @@ router.route('/api/calendar/:author')
 .delete(calendarController.remove)
 
 router.param('author', calendarController.calendarByID) 
+//Task
+router.route('/api/calendar/:calendarId/task')
+  .get(taskController.list)
+  .post(taskController.create)
+  .delete(taskController.deleteAll);
+
+router.route('/api/calendar/:calendarId/task/:taskId')
+  .put(taskController.update)
+  .delete(taskController.remove);
+
 export default router;

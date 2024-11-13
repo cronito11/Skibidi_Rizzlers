@@ -11,6 +11,7 @@ const TaskSchema = new Schema({
   },
   description: {
     type: String,
+    default: ""
   },
   startDate: {
     type: Date,

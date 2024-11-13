@@ -45,6 +45,7 @@ const list = async (req, res) => {
       })
   }
 }
+
 const calendarByID = async (req, res, next, id) => {
   try {
       //find element by id in data bas
@@ -56,6 +57,7 @@ const calendarByID = async (req, res, next, id) => {
           })
       req.profile = calendar
       next()
+      return calendar;
       //Try to catch error in case that happend
   } catch (err) {
       return res.status('400').json({
@@ -63,6 +65,7 @@ const calendarByID = async (req, res, next, id) => {
       })
   }
 }
+
 const read = (req, res) => {
   return res.json(req.profile)
 }
