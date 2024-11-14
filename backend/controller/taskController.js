@@ -4,8 +4,6 @@ import Calendar from '../model/calendar.js';
 import calendarController from './calendarController.js'
 import extend from 'lodash/extend.js';
 
-//import extend from 'lodash/extend.js'
-
 //Creation Task
 const create = async (req, res) => {
     const { calendarId } = req.params;

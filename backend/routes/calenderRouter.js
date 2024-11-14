@@ -3,7 +3,7 @@ import calendarController from '../controller/calendarController.js'
 import taskController from "../controller/taskController.js"
 const router = express();
 
-//Create routes for categories
+//Create routes for calendar
 router.route('/api/calendar') 
 .get(calendarController.list)
 .post(calendarController.create)
@@ -15,7 +15,7 @@ router.route('/api/calendar/:author')
 .delete(calendarController.remove)
 
 router.param('author', calendarController.calendarByID) 
-//Task
+//Create route for Task
 router.route('/api/calendar/:calendarId/task')
   .get(taskController.list)
   .post(taskController.create)
