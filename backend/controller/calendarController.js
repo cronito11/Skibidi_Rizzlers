@@ -5,9 +5,20 @@ import extend from "lodash/extend.js";
 //Creation Calendar
 const create = async (req, res) => {
   //Get data from body
+<<<<<<< HEAD
   const newCalendar = new Calendar(req.body);
   let user = await Calendar.find({ author: newCalendar.author });
   if (user.length > 0)
+=======
+  const newCalendar = new Calendar(req.body)
+  if(newCalendar.author == null)
+    return res.status(400).json({
+        error: "User is required"
+    })
+
+  let user = await Calendar.find({author: newCalendar.author})
+  if(user.length > 0)
+>>>>>>> 733e5fef8fd0d0a474f0d42ccde4b03660664300
     //Return error by user have a calendar
     return res.status(400).json({
       error: "User have a calendar Created",
