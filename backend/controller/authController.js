@@ -3,6 +3,7 @@ import UserModel from "../model/user.js";
 import bcrypt from "bcrypt";
 import config from "../config/config.js";
 
+//create api for user
 export const signup = async (req, res) => {
   try {
     const { name, email, password } = req.body;
