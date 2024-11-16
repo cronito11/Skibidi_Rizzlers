@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
@@ -55,39 +55,48 @@ export default function Login() {
       alert(err);
     }
   };
+
+  const navigateToSignUp = () => {
+    navigate("/signup");
+  };
   return (
     <>
-      <h1>Login</h1>
-      <Form>
-        <Form.Group className="mb-3" controlId="formBasicEmail">
-          <Form.Label>Email address</Form.Label>
-          <Form.Control
-            type="email"
-            placeholder="Enter email"
-            name="email"
-            value={loginInfo.email}
-            onChange={handleChange}
-          />
-          <Form.Text className="text-muted">
-            We'll never share your email with anyone else.
-          </Form.Text>
-        </Form.Group>
+      <div className="container">
+        <h1>Login</h1>
+        <Form>
+          <Form.Group className="mb-3" controlId="formBasicEmail">
+            <Form.Label>Email address</Form.Label>
+            <Form.Control
+              type="email"
+              placeholder="Enter email"
+              name="email"
+              value={loginInfo.email}
+              onChange={handleChange}
+            />
+            <Form.Text className="text-muted">
+              We'll never share your email with anyone else.
+            </Form.Text>
+          </Form.Group>
 
-        <Form.Group className="mb-3" controlId="formBasicPassword">
-          <Form.Label>Password</Form.Label>
-          <Form.Control
-            type="password"
-            placeholder="Password"
-            name="password"
-            value={loginInfo.password}
-            onChange={handleChange}
-          />
-        </Form.Group>
+          <Form.Group className="mb-3" controlId="formBasicPassword">
+            <Form.Label>Password</Form.Label>
+            <Form.Control
+              type="password"
+              placeholder="Password"
+              name="password"
+              value={loginInfo.password}
+              onChange={handleChange}
+            />
+          </Form.Group>
 
-        <Button variant="primary" type="submit" onClick={handleLogin}>
-          Login
-        </Button>
-      </Form>
+          <Button variant="primary" type="submit" onClick={handleLogin}>
+            Login
+          </Button>
+          <Button variant="primary" type="submit" onClick={navigateToSignUp}>
+            sign in
+          </Button>
+        </Form>
+      </div>
     </>
   );
 }

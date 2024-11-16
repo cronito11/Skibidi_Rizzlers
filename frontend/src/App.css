@@ -1,71 +1,62 @@
-*,
-::before,
-::after {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
-}
-
-label {
-  font-size: 20px;
-}
-
-html,
-body {
-  height: 100%;
-  width: 100%;
-}
-
-body {
+.title-bar {
   display: flex;
-  justify-content: center;
-  align-items: center;
+  align-items: center; /* Center items vertically */
+  justify-content: space-between; /* Distribute items across the bar */
+  padding: 10px; /* Add some padding */
+  background-color: #402e7a; /* Optional: Add a background color */
 }
 
-.container {
-  background-color: #fff;
-  padding: 32px 48px;
-  border-radius: 10px;
-  width: 100%;
-  max-width: 400px;
-  box-shadow: 8px 8px 24px 0px rgba(66, 68, 90, 1);
+.logo {
+  width: 50px; /* Adjust logo size */
+  height: auto; /* Maintain aspect ratio */
 }
 
-.container > h1 {
-  margin-bottom: 20px;
-}
-
-.container > form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.container div {
-  display: flex;
-  flex-direction: column;
-}
-
-.container input {
-  width: 100%;
-  font-size: 20px;
-  padding: 10px;
-  border: none;
-  outline: none;
-  border-bottom: 1px solid black;
-}
-
-.container input::placeholder {
-  font-size: 12px;
-  font-style: italic;
-}
-
-button {
-  background-color: purple;
-  border: none;
-  font-size: 20px;
+.app-title {
+  flex-grow: 1; /* Allow title to take up remaining space */
+  text-align: center; /* Center align the title */
+  margin: 0; /* Remove default margin */
+  font-size: 1.5rem; /* Adjust font size as needed */
+  font-weight: bold; /* Make title bold */
   color: white;
-  border-radius: 5px;
+}
+
+.sign-in-button {
+  padding: 5px 15px; /* Adjust button padding */
+  font-size: 1rem; /* Adjust font size */
+  background-color: #4b70f5; /* Button background color */
+  color: white; /* Button text color */
+  border: none; /* Remove border */
+  border-radius: 5px; /* Add border radius for rounded corners */
+  cursor: pointer; /* Change cursor to pointer on hover */
+}
+
+.sign-in-button:hover {
+  background-color: #3dc2ec; /* Darken button on hover */
+}
+
+.navbar {
+  background-color: #4c3bcf;
   padding: 10px;
-  cursor: pointer;
-  margin: 10px 0;
+}
+
+.nav-links {
+  display: flex;
+  list-style: none;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-item {
+  margin: 0 15px;
+}
+
+.nav-item a {
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+}
+
+.nav-item a:hover {
+  color: #3dc2ec;
 }
