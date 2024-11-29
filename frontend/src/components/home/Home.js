@@ -4,17 +4,37 @@ import "../../App.css";
 import CalendarPage from "./CalendarPage";
 import { Link } from "react-router-dom";
 import ProjectLogo from "../Placeholders/ProjectLogo.png";
+import Profile from "../profile/Profile";
+import { ProfileContainer } from "../profile/ProfileContainer";
 export default function Home() {
   const [loggedInUser, setLoggedInUser] = useState("");
+  //const [email, setEmail] = useState("");
+  const [userInfo, setUserInfo] = useState({
+    id: "",
+    name: "",
+    email: "",
+  });
+
+  const [showProfileContainer, setProfileContainer] = useState(false);
 
   const navigate = useNavigate();
   useEffect(() => {
     setLoggedInUser(localStorage.getItem("loggedInUser"));
+    //setEmail(localStorage.getItem("email"));
+
+    const storedUserInfo = localStorage.getItem("userInfo");
+    if (storedUserInfo) {
+      setUserInfo(JSON.parse(storedUserInfo));
+    }
+    // if (userInfo == null) console.log("userInfo is null");
+    // else console.log(userInfo);
   }, []);
 
   const handleLogout = (e) => {
     localStorage.removeItem("token");
     localStorage.removeItem("loggedInUser");
+    localStorage.removeItem("email");
+    localStorage.removeItem("userInfo");
     alert("User Loggedout");
     setTimeout(() => {
       navigate("/login");
@@ -50,6 +70,12 @@ export default function Home() {
         <button className="sign-in-button" onClick={handleLogout}>
           Log out
         </button>
+        <button
+          className="sign-in-button"
+          onClick={() => setProfileContainer(true)}
+        >
+          Profile
+        </button>
       </div>
 
       {/* Navbar */}
@@ -67,6 +93,13 @@ export default function Home() {
         <h1>Welcome {loggedInUser} !</h1>
       </div>
       <CalendarPage />
+      {/* <Profile user={userInfo}/> */}
+      {showProfileContainer && (
+        <ProfileContainer
+          user={userInfo}
+          onClose={() => setProfileContainer(false)}
+        />
+      )}
     </div>
   );
 }

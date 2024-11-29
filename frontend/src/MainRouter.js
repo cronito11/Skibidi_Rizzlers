@@ -8,6 +8,7 @@ import RefreshHandler from "./RefreshHandler";
 import Schedule from "./components/schedule/Schedule";
 import CalendarPage from "./components/home/Calendar.jsx";
 import LandingPage from "./components/home/LandingPage.js";
+import Profile from "./components/profile/Profile.js";
 const MainRouter = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -36,6 +37,11 @@ const MainRouter = () => {
             exact
             path="/calendar"
             element={<PrivateRoute element={<CalendarPage />} />}
+          />
+          <Route
+            exact
+            path="/profile"
+            element={<PrivateRoute element={<Profile />} />}
           />
         </Routes>
       </div>

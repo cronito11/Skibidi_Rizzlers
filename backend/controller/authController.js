@@ -54,6 +54,7 @@ export const login = async (req, res) => {
       jwtToken,
       email,
       name: user.name,
+      id: user._id,
     });
   } catch (err) {
     res.status(500).json({
