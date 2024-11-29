@@ -7,47 +7,31 @@ import { createEventModalPlugin } from '@schedule-x/event-modal';
 import { createDragAndDropPlugin } from '@schedule-x/drag-and-drop';
 import Sidebar from './Sidebar';
 import { createEventsServicePlugin } from '@schedule-x/events-service'
-const eventsServicePlugin = createEventsServicePlugin();
 
 function Calendar() {
-  
+  const eventsServicePlugin = useState(() => createEventsServicePlugin())[0]
+
   const [events, setEvents] = useState([]);
   const addEvent = (newEvent) => {
-    setEvents(prevEvents => {
-      eventsServicePlugin.set([...prevEvents, newEvent]); // Updates the calendar with the new event
-      return [...prevEvents, newEvent];  // Also update local state for consistency
-    });
+    setEvents(prevEvents => [...prevEvents, newEvent]);
+    eventsServicePlugin.add(newEvent); // Updates the calendar with the new event
+    
     console.log("Event Added: ", newEvent);
+    console.log("Total: ", eventsServicePlugin.getAll());
   };
   
 
   const modifyEvent = (updatedEvent) => {
-    setEvents(prevEvents => {
-      const eventId = String(updatedEvent.id);  // Ensure id is a string
-      const updatedEvents = {
-        ...prevEvents,
-        [eventId]: updatedEvent // Use stringified id as the key
-      };
-  
-      eventsServicePlugin.update(updatedEvents);
-      return updatedEvents;
-    });
+    setEvents(prevEvents =>
+      prevEvents.map(event => (event.id === updatedEvent.id ? updatedEvent : event))
+    );
+    eventsServicePlugin.update(updatedEvent); // Update plugin
   };
 
   const deletedEvent = (deletedEvent) => {
-    setEvents(prevEvents => {
-      const eventId = String(deletedEvent.id);  // Ensure id is a string
-      const deletedEvents = {
-        ...prevEvents,
-        [eventId]: deletedEvent // Use stringified id as the key
-      };
-  
-      eventsServicePlugin.remove(deletedEvents);
-      return deletedEvents;
-    });
-  };
-  
-  
+    setEvents(prevEvents => prevEvents.filter(event => event.id !== deletedEvent.id));
+    eventsServicePlugin.remove(deletedEvent); // Update plugin
+  };  
 
   const calendar = useCalendarApp({
     views: [
@@ -59,6 +43,12 @@ function Calendar() {
     events: events,
     plugins: [createEventModalPlugin(), createDragAndDropPlugin(), eventsServicePlugin],
   });
+
+  useEffect(() => {
+    // Fetch initial events and set state
+    const initialEvents = eventsServicePlugin.getAll();
+    setEvents(initialEvents);
+  }, [eventsServicePlugin]);
 
   return (
     <div className="calendar">
