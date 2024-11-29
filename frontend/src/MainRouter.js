@@ -6,7 +6,7 @@ import Signup from "./components/signup/signup";
 import { useState } from "react";
 import RefreshHandler from "./RefreshHandler";
 import Schedule from "./components/schedule/Schedule";
-import CalendarPage from "./components/home/CalendarPage";
+import CalendarPage from "./components/home/Calendar.jsx";
 import LandingPage from "./components/home/LandingPage.js";
 const MainRouter = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);

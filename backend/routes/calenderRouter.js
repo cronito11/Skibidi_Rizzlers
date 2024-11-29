@@ -9,12 +9,12 @@ router.route('/api/calendar')
 .post(calendarController.create)
 .delete(calendarController.deleteAll)
 
-router.route('/api/calendar/:author') 
+router.route('/api/calendar/:calendar') 
 .get(calendarController.read)
 .put(calendarController.update) 
 .delete(calendarController.remove)
 
-router.param('author', calendarController.calendarByID) 
+router.param('calendar', calendarController.calendarByID) 
 //Create route for Task
 router.route('/api/calendar/:calendarId/task')
   .get(taskController.list)

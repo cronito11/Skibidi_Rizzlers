@@ -116,24 +116,5 @@ const deleteAll = async (req, res) => {
     }
 };
 
-
-const calendarByID = async (req, res, next, id) => {
-    try {
-        //find element by id in data bas
-        let calendar = await Task.findById(id)
-        //If product doesn't exist show message en response
-        if (!calendar)
-            return res.status('400').json({
-                error: "Calendar not found"
-            })
-        req.profile = calendar
-        next()
-        //Try to catch error in case that happend
-    } catch (err) {
-        return res.status('400').json({
-            error: "Could not retrieve calendar"
-        })
-    }
-  }
-export default { create, calendarByID: calendarByID, list, remove, update, deleteAll}
+export default { create, list, remove, update, deleteAll}
 
