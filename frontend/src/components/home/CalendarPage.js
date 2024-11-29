@@ -1,15 +1,16 @@
 // src/components/CalendarPage.js
 import React from "react";
 import "../../App.css";
+import { useNavigate } from "react-router-dom";
 import Placeholder1 from "../Placeholders/image.png";
+import Calendar from "./Calendar.jsx";
 
 const CalendarPage = () => {
   return (
     <div>
       {/* Hero Section */}
       <div className="CalendarPage">
-        <h1>The Calendar view will be displayed here</h1>
-        <img src={Placeholder1} alt="Calendar Placeholder View" />
+        {<Calendar />}
       </div>
     </div>
   );

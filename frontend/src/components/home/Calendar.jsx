@@ -61,7 +61,7 @@ function Calendar() {
   });
 
   return (
-    <div className="App">
+    <div className="calendar">
       <div className="calendar-container">
         <ScheduleXCalendar calendarApp={calendar} />
       </div>
