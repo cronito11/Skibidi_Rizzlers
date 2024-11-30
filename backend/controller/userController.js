@@ -29,6 +29,7 @@ export const update = async (req, res) => {
       success: true,
       name: user.name,
       email: user.email,
+      user: user,
     });
   } catch (err) {
     res.status(500).json({

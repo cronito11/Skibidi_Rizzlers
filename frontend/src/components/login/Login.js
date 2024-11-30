@@ -36,11 +36,16 @@ export default function Login() {
       });
       console.log("afterfetchgubg");
       const result = await response.json();
-      const { success, message, jwtToken, name, error } = result;
+      const { success, message, jwtToken, name, id, error } = result;
       if (success) {
         alert(message);
         localStorage.setItem("token", jwtToken);
         localStorage.setItem("loggedInUser", name);
+        localStorage.setItem("email", email);
+        localStorage.setItem(
+          "userInfo",
+          JSON.stringify({ email: email, name: name, id: id })
+        );
         setTimeout(() => {
           navigate("/home");
         }, 1000);
