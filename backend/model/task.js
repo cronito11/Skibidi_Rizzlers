@@ -14,12 +14,12 @@ const TaskSchema = new Schema({
     default: ""
   },
   startDate: {
-    type: Date,
-    default: Date.now
+    type: String,
+    default: ""
     },
     endDate: {
-    type: Date,
-    default: Date.now
+     type: String,
+    default: ""
     }
 });
 export { TaskSchema }; // Export only the schema

@@ -41,7 +41,7 @@ const list = async (req, res) => {
     }
 
     //send request to data base based in the query.
-    let calendar = await Calendar.find(query).select("task updated created");
+    let calendar = await Calendar.find(query).select("author task updated created");
     //showing porducts in the response
     res.json(calendar);
   } catch (err) {

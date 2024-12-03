@@ -12,7 +12,7 @@ const create = async (req, res) => {
     try {        
     const calendar = await Calendar.findByIdAndUpdate(
         calendarId,
-        { $push: { task: newTask}, update: Date.now },
+        { $push: { task: newTask}/*, update: Date.now*/ },
         { new: true }
     );
     res.json(calendar);

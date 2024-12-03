@@ -26,6 +26,8 @@ export default function Login() {
       return alert("email and password are required");
     }
     try {
+      
+      //Login user Data
       const url = `http://localhost:8080/auth/login`;
       const response = await fetch(url, {
         method: "POST",
@@ -38,13 +40,25 @@ export default function Login() {
       const result = await response.json();
       const { success, message, jwtToken, name, id, error } = result;
       if (success) {
+        //
+        const urlCalendar = `http://localhost:8080/calender/api/calendar?${id}`;
+        console.log("Calendar "+ urlCalendar);
+        const responseCalendar = await fetch(urlCalendar, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+         // body: JSON.stringify(loginInfo),
+        });
+        const resultCalendar = await responseCalendar.json();
+        console.log(resultCalendar[0]._id)
         alert(message);
         localStorage.setItem("token", jwtToken);
         localStorage.setItem("loggedInUser", name);
         localStorage.setItem("email", email);
         localStorage.setItem(
           "userInfo",
-          JSON.stringify({ email: email, name: name, id: id })
+          JSON.stringify({ email: email, name: name, id: id, calendarID: resultCalendar[0]._id })
         );
         setTimeout(() => {
           navigate("/home");
