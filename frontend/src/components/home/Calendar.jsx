@@ -76,11 +76,38 @@ function Calendar() {
   };
   
 
-  const modifyEvent = (updatedEvent) => {
+  const modifyEvent = async (updatedEvent) => {
     setEvents(prevEvents =>
       prevEvents.map(event => (event.id === updatedEvent.id ? updatedEvent : event))
     );
     eventsServicePlugin.update(updatedEvent); // Update plugin
+
+    try {
+      const url = `http://localhost:8080/calender/api/calendar/${userInfo.calendarID}/task/${updatedEvent.id}`;//Should be a relative url
+      const response = await fetch(url, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedEvent),
+      });
+
+      const result = await response.json();
+      
+      const { success, message, error } = result;
+      if (success) {
+        console.log("Updated")
+      } else if (error) {
+        const details = error?.details[0].message;
+        alert("Error Updated: " +details);
+      } else if (!success) {
+        alert("Not success Updated: " +message);
+      }
+      console.log(result);
+    }catch (ex)
+    {
+      alert("ERROR: "+ ex);
+    }
   };
 
   const deletedEvent = async (deletedEvent) => {
@@ -144,17 +171,29 @@ function Calendar() {
           for(var idx = 0; idx < message.length; idx++)
           {
             let taskCalendar = message[idx];
-            if(eventsServicePlugin.get(taskCalendar._id))
-              continue;
-            eventsServicePlugin.add(
-              {
-                id: taskCalendar._id,
-                start: taskCalendar.startDate,
-                end: taskCalendar.endDate,
-                title: taskCalendar.title,
-                description: taskCalendar.description,
-              }
-            );
+            let taskSaved = eventsServicePlugin.get(taskCalendar._id);
+            if(taskSaved)
+            {
+              eventsServicePlugin.update(
+                {
+                  id: taskCalendar._id,
+                  start: taskCalendar.startDate,
+                  end: taskCalendar.endDate,
+                  title: taskCalendar.title,
+                  description: taskCalendar.description,
+                }
+              );
+            }else{              
+              eventsServicePlugin.add(
+                {
+                  id: taskCalendar._id,
+                  start: taskCalendar.startDate,
+                  end: taskCalendar.endDate,
+                  title: taskCalendar.title,
+                  description: taskCalendar.description,
+                }
+              );
+            }
           }        
       } else if (error) {
         const details = error?.details[0].message;

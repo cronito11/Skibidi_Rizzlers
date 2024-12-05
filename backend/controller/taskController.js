@@ -71,7 +71,10 @@ const update = async (req, res) => {
     task = extend(task, taskInfo);      
       //Save in data base
       await calendar.save()
-      res.json(calendar);
+      return res.status(200).json({
+        message: calendar,
+        success: true,
+      })   
   } catch (err) {
       return res.status(400).json({
           error: errorHandler.getErrorMessage(err)
