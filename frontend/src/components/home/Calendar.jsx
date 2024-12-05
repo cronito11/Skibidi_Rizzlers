@@ -144,6 +144,8 @@ function Calendar() {
           for(var idx = 0; idx < message.length; idx++)
           {
             let taskCalendar = message[idx];
+            if(eventsServicePlugin.get(taskCalendar._id))
+              continue;
             eventsServicePlugin.add(
               {
                 id: taskCalendar._id,
