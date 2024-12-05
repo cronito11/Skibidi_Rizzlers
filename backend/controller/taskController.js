@@ -8,16 +8,22 @@ import extend from 'lodash/extend.js';
 const create = async (req, res) => {
     const { calendarId } = req.params;
     const newTask = req.body;
-
+console.log(req.body);
     try {        
     const calendar = await Calendar.findByIdAndUpdate(
         calendarId,
         { $push: { task: newTask}/*, update: Date.now*/ },
         { new: true }
     );
-    res.json(calendar);
+    res.status(200).json({
+        message: calendar,
+        success: true,
+      })     
     } catch (error) {
-    console.error("Error adding task:", error);
+        res.status(400).json({
+            message: "Error adding task:"+ error,
+            success: false,
+          })   
     }
 }
 
@@ -30,9 +36,11 @@ const list = async (req, res) => {
 
     //In case the error show error response
     if(calendar.status == 400)
-        return res; 
-    res.json(calendar.task)
-     
+        return res;
+    res.status(200).json({
+        message: calendar.task,
+        success: true,
+      })     
   } catch (err) {
       return res.status(400).json({
           error: errorHandler.getErrorMessage(err)
@@ -90,10 +98,14 @@ const remove = async (req, res) => {
           }
 
         calendar.task.splice(taskIndex, 1);
-        await calendar.save()        
-        res.json(calendar);
+        await calendar.save()
+        return res.status(200).json({
+            message: calendar,
+            success: true,
+          });     
     } catch (error) {
-        console.error("Error removing task:", error);
+        res.status("400")
+            .json({ error: "Error removing task:", error });
     }
 }
 

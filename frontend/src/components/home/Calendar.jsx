@@ -12,6 +12,7 @@ import { parse } from 'date-fns';
 function calendarToDb(calendarFormat)
 {
   var data = {
+    _id: calendarFormat.id,
     title: calendarFormat.title,
     description: calendarFormat.description,
     startDate :calendarFormat.start,
@@ -49,16 +50,14 @@ function Calendar() {
     ;
     
     try {
-      const url = `http://localhost:8080/calender/api/calendar/${userInfo.calendarID}/task/`;
-      const response = fetch(url, {
+      const url = `http://localhost:8080/calender/api/calendar/${userInfo.calendarID}/task/`;//Should be a relative url
+      const response = await fetch(url, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(updatedCalendarInfo),
       });
-      console.log(url+" - "+JSON.stringify(updatedCalendarInfo));
-
       const result = await response.json();
       const { success, message, error } = result;
       if (success) {
@@ -72,7 +71,7 @@ function Calendar() {
       console.log(result);
     }catch (ex)
     {
-
+      console.log("Error "+ ex)
     }
   };
   
@@ -84,9 +83,35 @@ function Calendar() {
     eventsServicePlugin.update(updatedEvent); // Update plugin
   };
 
-  const deletedEvent = (deletedEvent) => {
+  const deletedEvent = async (deletedEvent) => {
     setEvents(prevEvents => prevEvents.filter(event => event.id !== deletedEvent.id));
     eventsServicePlugin.remove(deletedEvent); // Update plugin
+
+    try {
+      const url = `http://localhost:8080/calender/api/calendar/${userInfo.calendarID}/task/${deletedEvent.id}`;//Should be a relative url
+      const response = await fetch(url, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const result = await response.json();
+      
+      const { success, message, error } = result;
+      if (success) {
+        console.log("Deleted")
+      } else if (error) {
+        const details = error?.details[0].message;
+        alert("Error Deleted: " +details);
+      } else if (!success) {
+        alert("Not success Deleted: " +message);
+      }
+      console.log(result);
+    }catch (ex)
+    {
+      alert("ERROR: "+ ex);
+    }
   };  
 
   const calendar = useCalendarApp({
@@ -100,15 +125,66 @@ function Calendar() {
     plugins: [createEventModalPlugin(), createDragAndDropPlugin(), eventsServicePlugin],
   });
 
-  useEffect(() => {
-    const storedUserInfo = localStorage.getItem("userInfo");
-    if (storedUserInfo) {
-      setUserInfo(JSON.parse(storedUserInfo));
-    }
+  async function loadCalendar(jsonUser)
+  {
+    
+    try {
+      const url = `http://localhost:8080/calender/api/calendar/${jsonUser.calendarID}/task/`;//Should be a relative url
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      console.log("Trying load Calendar ")
+      const result = await response.json();
+      const { success, message, error } = result;
+      if (success) {
+        console.log("Succesfully loaded")
+          for(var idx = 0; idx < message.length; idx++)
+          {
+            let taskCalendar = message[idx];
+            eventsServicePlugin.add(
+              {
+                id: taskCalendar._id,
+                start: taskCalendar.startDate,
+                end: taskCalendar.endDate,
+                title: taskCalendar.title,
+                description: taskCalendar.description,
+              }
+            );
+          }        
+      } else if (error) {
+        const details = error?.details[0].message;
+        alert("Error Deleted: " +details);
+      } else if (!success) {
+        alert("Not success Deleted: " +message);
+      }
+      
 
-    // Fetch initial events and set state
-    const initialEvents = eventsServicePlugin.getAll();
-    setEvents(initialEvents);
+    }catch (ex)
+    {
+      alert("ERROR: "+ ex);
+    }
+  }
+
+  useEffect(() => {
+    async function initialize() {
+      const storedUserInfo = localStorage.getItem("userInfo");
+      if (storedUserInfo) {
+        const jsonUser = JSON.parse(storedUserInfo);
+        setUserInfo(jsonUser);
+  
+        // Wait until the eventsServicePlugin is ready (if needed)
+        const initialEvents = await eventsServicePlugin.getAll();
+        setEvents(initialEvents);
+  
+        // Call loadCalendar after eventsServicePlugin is ready
+        await loadCalendar(jsonUser);
+      }
+    }
+  
+    initialize();
   }, [eventsServicePlugin]);
 
   return (
