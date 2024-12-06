@@ -59,7 +59,11 @@ export default function Home() {
   // useEffect(() => {
   //   fetchCalender();
   // }, []);
+  const handleOnclickProfile = ()=>{
+    setProfileContainer(true);
+    console.log("Profile clicked" + showProfileContainer);
 
+  }
   return (
     <div>
       {/* Title Bar */}

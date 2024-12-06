@@ -41,7 +41,7 @@ export default function Login() {
       const { success, message, jwtToken, name, id, error } = result;
       if (success) {
         //
-        const urlCalendar = `http://localhost:8080/calender/api/calendar?${id}`;
+        const urlCalendar = `http://localhost:8080/calender/api/calendar/${id}`;
         console.log("Calendar "+ urlCalendar);
         const responseCalendar = await fetch(urlCalendar, {
           method: "GET",
@@ -51,15 +51,23 @@ export default function Login() {
          // body: JSON.stringify(loginInfo),
         });
         const resultCalendar = await responseCalendar.json();
-        console.log(resultCalendar[0]._id)
+        console.log(JSON.stringify(resultCalendar));
+        console.log(resultCalendar._id);
         alert(message);
         localStorage.setItem("token", jwtToken);
         localStorage.setItem("loggedInUser", name);
         localStorage.setItem("email", email);
+        localStorage.setItem("calendarId", resultCalendar._id);
         localStorage.setItem(
           "userInfo",
-          JSON.stringify({ email: email, name: name, id: id, calendarID: resultCalendar[0]._id })
+          JSON.stringify({
+            email: email,
+            name: name,
+            id: id,
+            calendarId: resultCalendar._id,
+          })
         );
+        
         setTimeout(() => {
           navigate("/home");
         }, 1000);

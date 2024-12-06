@@ -36,7 +36,7 @@ function Calendar() {
     id: "",
     name: "",
     email: "",
-    calendarID: ""
+    calendarId: ""
   });
 
   const eventsServicePlugin = useState(() => createEventsServicePlugin())[0]
@@ -50,7 +50,7 @@ function Calendar() {
     ;
     
     try {
-      const url = `http://localhost:8080/calender/api/calendar/${userInfo.calendarID}/task/`;//Should be a relative url
+      const url = `http://localhost:8080/calender/api/calendar/${userInfo.calendarId}/task/`;//Should be a relative url
       const response = await fetch(url, {
         method: "POST",
         headers: {
@@ -83,7 +83,8 @@ function Calendar() {
     eventsServicePlugin.update(updatedEvent); // Update plugin
 
     try {
-      const url = `http://localhost:8080/calender/api/calendar/${userInfo.calendarID}/task/${updatedEvent.id}`;//Should be a relative url
+      console.log(userInfo.calendarId, updatedEvent.id);
+      const url = `http://localhost:8080/calender/api/calendar/${userInfo.calendarId}/task/${updatedEvent.id}`;//Should be a relative url
       const response = await fetch(url, {
         method: "PUT",
         headers: {
@@ -114,8 +115,9 @@ function Calendar() {
     setEvents(prevEvents => prevEvents.filter(event => event.id !== deletedEvent.id));
     eventsServicePlugin.remove(deletedEvent); // Update plugin
 
+    console.log(userInfo.calendarId, deletedEvent.id);
     try {
-      const url = `http://localhost:8080/calender/api/calendar/${userInfo.calendarID}/task/${deletedEvent.id}`;//Should be a relative url
+      const url = `http://localhost:8080/calender/api/calendar/${userInfo.calendarId}/task/${deletedEvent.id}`;//Should be a relative url
       const response = await fetch(url, {
         method: "DELETE",
         headers: {
@@ -156,7 +158,9 @@ function Calendar() {
   {
     
     try {
-      const url = `http://localhost:8080/calender/api/calendar/${jsonUser.calendarID}/task/`;//Should be a relative url
+      //const calendarId = localStorage.getItem("calendarId");
+      console.log(jsonUser.calendarId);
+      const url = `http://localhost:8080/calender/api/calendar/${jsonUser.calendarId}/task/`;//Should be a relative url
       const response = await fetch(url, {
         method: "GET",
         headers: {
@@ -165,34 +169,28 @@ function Calendar() {
       });
       console.log("Trying load Calendar ")
       const result = await response.json();
-      const { success, message, error } = result;
+      const { success, message, error,tasks } = result;
       if (success) {
         console.log("Succesfully loaded")
-          for(var idx = 0; idx < message.length; idx++)
-          {
-            let taskCalendar = message[idx];
+          for (var idx = 0; idx < tasks.length; idx++) {
+            let taskCalendar = tasks[idx];
             let taskSaved = eventsServicePlugin.get(taskCalendar._id);
-            if(taskSaved)
-            {
-              eventsServicePlugin.update(
-                {
-                  id: taskCalendar._id,
-                  start: taskCalendar.startDate,
-                  end: taskCalendar.endDate,
-                  title: taskCalendar.title,
-                  description: taskCalendar.description,
-                }
-              );
-            }else{              
-              eventsServicePlugin.add(
-                {
-                  id: taskCalendar._id,
-                  start: taskCalendar.startDate,
-                  end: taskCalendar.endDate,
-                  title: taskCalendar.title,
-                  description: taskCalendar.description,
-                }
-              );
+            if (taskSaved) {
+              eventsServicePlugin.update({
+                id: taskCalendar._id,
+                start: taskCalendar.startDate,
+                end: taskCalendar.endDate,
+                title: taskCalendar.title,
+                description: taskCalendar.description,
+              });
+            } else {
+              eventsServicePlugin.add({
+                id: taskCalendar._id,
+                start: taskCalendar.startDate,
+                end: taskCalendar.endDate,
+                title: taskCalendar.title,
+                description: taskCalendar.description,
+              });
             }
           }        
       } else if (error) {

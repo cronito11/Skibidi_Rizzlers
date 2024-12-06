@@ -19,6 +19,41 @@ export default function Signup() {
   };
   console.log("SignUp info -> ", signupInfo);
   const navigate = useNavigate();
+
+  
+  const createAndAssignCalendar = async (e, id) => {
+    e.preventDefault();
+    //const { name, email, password } = signupInfo;
+    // if (!name || !email || !password) {
+    //   alert("name, email and password are required");
+    // }
+    try {
+      const url = `http://localhost:8080/calender/api/calendar`;
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          author: id,
+          task: [],
+        }),
+      });
+      const result = await response.json();
+      const { success, message, error} = result;
+      if (success) {
+        alert(message);
+      } else if (error) {
+        const details = error?.details[0].message;
+        alert(details);
+      } else if (!success) {
+        alert(message);
+      }
+      console.log(result);
+    } catch (err) {
+      alert(err);
+    }
+  };
   const handleSignup = async (e) => {
     e.preventDefault();
     const { name, email, password } = signupInfo;
@@ -35,8 +70,15 @@ export default function Signup() {
         body: JSON.stringify(signupInfo),
       });
       const result = await response.json();
-      const { success, message, error } = result;
+      const { success, message, error, id } = result;
       if (success) {
+        
+
+        console.log(id);
+        
+
+        createAndAssignCalendar(e, id);
+
         alert(message);
         setTimeout(() => {
           navigate("/login");

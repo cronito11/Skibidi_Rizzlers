@@ -23,6 +23,7 @@ const create = async (req, res) => {
     await newCalendar.save();
     return res.status(200).json({
       message: "Successfully Created calendar!",
+      success: true,
     });
   } catch (err) {
     //Return error
@@ -54,11 +55,12 @@ const list = async (req, res) => {
 const calendarByID = async (req, res, next, id) => {
   try {
     //find element by id in data bas
-    let calendar = await Calendar.findById(id);
+    let calendar = await Calendar.findOne({author: id});
     //If product doesn't exist show message en response
     if (!calendar)
       return res.status("400").json({
         error: "Calendar not found",
+        id: id
       });
     req.profile = calendar;
     next();

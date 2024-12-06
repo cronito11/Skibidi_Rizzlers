@@ -3,12 +3,13 @@ import Task from '../model/task.js'
 import Calendar from '../model/calendar.js';
 import calendarController from './calendarController.js'
 import extend from 'lodash/extend.js';
+import mongoose from 'mongoose';
 
 //Creation Task
 const create = async (req, res) => {
     const { calendarId } = req.params;
     const newTask = req.body;
-console.log(req.body);
+    console.log(req.body);
     try {        
     const calendar = await Calendar.findByIdAndUpdate(
         calendarId,
@@ -30,21 +31,32 @@ console.log(req.body);
 const list = async (req, res) => {
 
     const { calendarId } = req.params;
-  try {
-      let calendar = await calendarController.calendarByID(req, res,()=>{
-      }, calendarId)
-
-    //In case the error show error response
-    if(calendar.status == 400)
-        return res;
-    res.status(200).json({
-        message: calendar.task,
-        success: true,
-      })     
+     
+    if (!mongoose.Types.ObjectId.isValid(calendarId)) {
+       return res.status(400).send("Invalid ID");
+    }
+    
+    console.log(calendarId);  
+    try {
+        console.log("about to tru");
+        let calendar = await Calendar.findById(calendarId);
+        console.log(calendar);
+         //In case the error show error response
+        if (!calendar) {
+          return res.status(404).send("Calendar not found");
+        }
+        console.log(calendar.toJSON());
+        res.status(200).json({
+            message: "Tasks found success",
+            success: true,
+            tasks: calendar.task,
+        });
   } catch (err) {
-      return res.status(400).json({
-          error: errorHandler.getErrorMessage(err)
-      })
+    res.status(500).json({
+      message: "Internal server errror",
+      success: false,
+      error: err,
+    });
   }
 }
 
@@ -53,8 +65,7 @@ const update = async (req, res) => {
     const taskInfo = req.body;
   try {
     //Take object info
-    let calendar = await calendarController.calendarByID(req, res,()=>{
-    }, calendarId)
+    let calendar = await Calendar.findById(calendarId);
 
     //In case the error show error response
     if(calendar.status == 400)
@@ -83,12 +94,11 @@ const update = async (req, res) => {
 }
 const remove = async (req, res) => {
     const { calendarId, taskId } = req.params;
-
+    console.log("hellow from remove event");
     try {        
-        await calendarController.calendarByID(req, res,()=>{
-        }, calendarId)
+        let calendar = await Calendar.findById(calendarId);
     
-        let calendar = req.profile;
+        //let calendar = req.profile;
         //In case the error show error response
         if(!calendar)
             return res;

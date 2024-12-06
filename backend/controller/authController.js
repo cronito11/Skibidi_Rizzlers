@@ -21,6 +21,7 @@ export const signup = async (req, res) => {
     res.status(201).json({
       message: "Signup successfully",
       success: true,
+      id: userModel._id,
     });
   } catch (err) {
     res.status(500).json({
