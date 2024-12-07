@@ -181,7 +181,7 @@ function Calendar() {
                 start: taskCalendar.startDate,
                 end: taskCalendar.endDate,
                 title: taskCalendar.title,
-                description: taskCalendar.description,
+                description: `"${taskCalendar.description}" ID: ${taskCalendar._id}"`,
               });
             } else {
               eventsServicePlugin.add({
@@ -189,7 +189,7 @@ function Calendar() {
                 start: taskCalendar.startDate,
                 end: taskCalendar.endDate,
                 title: taskCalendar.title,
-                description: taskCalendar.description,
+                description: `"${taskCalendar.description}" ID: ${taskCalendar._id}"`,
               });
             }
           }        

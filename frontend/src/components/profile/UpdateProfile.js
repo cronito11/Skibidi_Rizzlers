@@ -62,7 +62,7 @@ export default function UpdateProfile({ user, onCancel, onUpdate }) {
   };
 
   return (
-    <div>
+    <div className="update-profile-container">
       <h2>Update Profile</h2>
       <form>
         <div>
@@ -99,7 +99,9 @@ export default function UpdateProfile({ user, onCancel, onUpdate }) {
             required
           />
         </div>
-        <button type="submit" onClick={handleUpdateSubmit}>Submit</button>
+        <button type="submit" onClick={handleUpdateSubmit}>
+          Submit
+        </button>
         <button type="button" onClick={onCancel}>
           Cancel
         </button>

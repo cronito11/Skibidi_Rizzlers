@@ -83,10 +83,14 @@ export default function Schedule() {
           <ul>
             {tasks.map((task, index) => (
               <li key={task._id}>
+                {" "}
+                <br />
+                <strong>Id: {task._id} </strong> <br />
                 <strong>Title:</strong> {task.title} <br />
-                <strong>Description:</strong> {task.description} <br />
+                <strong>Description:</strong> {task.description} {} <br />
                 <strong>Start Date:</strong> {task.startDate} <br />
                 <strong>End Date:</strong> {task.endDate}
+                            
               </li>
             ))}
           </ul>
@@ -94,7 +98,6 @@ export default function Schedule() {
           <p>No tasks available.</p>
         )}
       </div>
-      
     </div>
   );
 }

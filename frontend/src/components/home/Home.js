@@ -81,7 +81,13 @@ export default function Home() {
           Profile
         </button>
       </div>
-
+      {/* <Profile user={userInfo}/> */}
+      {showProfileContainer && (
+        <ProfileContainer
+          user={userInfo}
+          onClose={() => setProfileContainer(false)}
+        />
+      )}
       {/* Navbar */}
       <nav className="navbar">
         <ul className="nav-links">
@@ -97,13 +103,6 @@ export default function Home() {
         <h1>Welcome {loggedInUser} !</h1>
       </div>
       <CalendarPage />
-      {/* <Profile user={userInfo}/> */}
-      {showProfileContainer && (
-        <ProfileContainer
-          user={userInfo}
-          onClose={() => setProfileContainer(false)}
-        />
-      )}
     </div>
   );
 }
